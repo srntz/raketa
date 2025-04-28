@@ -1,19 +1,24 @@
 package engine
 
-import "raketa/internal/database"
+import "raketa/internal/database/database"
 
 type Engine struct {
-	db []*database.Database
+	db map[string]*database.Database
 }
 
 func Constructor() *Engine {
-	return &Engine{db: []*database.Database{}}
+	return &Engine{db: map[string]*database.Database{}}
 }
 
 func (engine *Engine) Run() {
-	engine.db = append(engine.db, database.InitializeDefaultDatabase())
+	var name, defaultDb = database.InitializeDefaultDatabase()
+	engine.db[name] = defaultDb
 }
 
-func (engine *Engine) GetDatabases() []*database.Database {
-	return engine.db
+func (engine *Engine) GetDatabase(identifier string) *database.Database {
+	value, ok := engine.db[identifier]
+	if !ok {
+		return nil
+	}
+	return value
 }

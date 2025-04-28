@@ -8,5 +8,5 @@ import (
 func main() {
 	var engine = engine.Constructor()
 	engine.Run()
-	fmt.Println(*engine.GetDatabases()[0])
+	fmt.Println(*engine.GetDatabase("default").GetNamespace("main"))
 }
