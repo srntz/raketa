@@ -1,35 +1,52 @@
 package namespace
 
-import "raketa/internal/database/rktypes"
+import (
+	"raketa/internal/database/rktypes"
+)
 
 type namespaceMetadata struct {
 	restrictValueTypeTo rktypes.RKTypeconst
 }
 
-func newNamespaceMetadata() *namespaceMetadata {
-	return &namespaceMetadata{
-		restrictValueTypeTo: rktypes.TYPECONST_ANY,
-	}
+type NamespaceStorageValueTypes interface {
+	*rktypes.RKStr | *rktypes.RKAny
+	rktypes.IRKType
 }
 
-type Namespace struct {
+type INamespace interface {
+	SetRestrictValueTypeTo(restrictTo rktypes.RKTypeconst)
+}
+
+type Namespace[T NamespaceStorageValueTypes] struct {
 	name     string
+	storage  map[string]T
 	metadata *namespaceMetadata
 }
 
-func NewNamespace(name string) (string, *Namespace) {
-	return name, &Namespace{name: name, metadata: newNamespaceMetadata()}
+func NewNamespace[T NamespaceStorageValueTypes](name string, typeConstraint T) (string, INamespace) {
+	return name, &Namespace[T]{
+		name:     name,
+		storage:  map[string]T{},
+		metadata: newNamespaceMetadata(typeConstraint),
+	}
 }
 
-func InitializeDefaultNamespace() (string, *Namespace) {
-	return "main", &Namespace{name: "main", metadata: newNamespaceMetadata()}
+func newNamespaceMetadata(typeConstraint rktypes.IRKType) *namespaceMetadata {
+	return &namespaceMetadata{
+		restrictValueTypeTo: typeConstraint.ToEnum(),
+	}
 }
 
-func (namespace *Namespace) SetRestrictValueTypeTo(restrictTo rktypes.RKTypeconst) {
+func InitializeDefaultNamespace() (string, INamespace) {
+	return NewNamespace("main", &rktypes.RKAny{})
+}
+
+// TODO re-initialize namespace storage. create a way to check the validity of type-typeconst pair
+func (namespace *Namespace[T]) SetRestrictValueTypeTo(restrictTo rktypes.RKTypeconst) {
 	namespace.metadata.restrictValueTypeTo = restrictTo
 }
 
-func (namespace *Namespace) CheckHealth() bool {
+func (namespace *Namespace[T]) CheckHealth() bool {
 	if namespace.name != "" && namespace.metadata != nil {
 		return true
 	}

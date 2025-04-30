@@ -1,6 +1,8 @@
 package rktypes
 
-import "errors"
+import (
+	"errors"
+)
 
 const (
 	RKSTR_CHARLIMIT_DEFAULT = -1
@@ -11,17 +13,24 @@ type rkStrMetadata struct {
 }
 
 type RKStr struct {
-	name     RKTypeconst
+	typedef  RKType
 	metadata rkStrMetadata
 }
 
-func NewRKStr() *RKStr {
+func NewRKStr(value string) *RKStr {
 	return &RKStr{
-		name: TYPECONST_STR,
+		typedef: RKType{
+			datatype: TYPECONST_STR,
+			value:    value,
+		},
 		metadata: rkStrMetadata{
 			charLimit: RKSTR_CHARLIMIT_DEFAULT,
 		},
 	}
+}
+
+func (str RKStr) ToEnum() RKTypeconst {
+	return TYPECONST_STR
 }
 
 func (str *RKStr) SetCharLimit(limit int) error {

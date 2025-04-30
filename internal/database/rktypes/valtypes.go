@@ -1,10 +1,10 @@
 package rktypes
 
-type RKTypeconst = string
+type RKTypeconst int
 
 const (
-	TYPECONST_ANY  RKTypeconst = "any"
-	TYPECONST_STR  RKTypeconst = "str"
-	TYPECONST_NUM  RKTypeconst = "num"
-	TYPECONST_BOOL RKTypeconst = "bool"
+	TYPECONST_ANY RKTypeconst = iota
+	TYPECONST_STR
+	TYPECONST_NUM
+	TYPECONST_BOOL
 )
