@@ -7,12 +7,12 @@ type RKAny struct {
 func NewRKAny(value string) *RKAny {
 	return &RKAny{
 		typedef: RKType{
-			datatype: TYPECONST_ANY,
+			datatype: DatatypeAny,
 			value:    value,
 		},
 	}
 }
 
-func (rktype RKAny) ToEnum() RKTypeconst {
-	return TYPECONST_ANY
+func (rktype RKAny) ToEnum() RKDatatype {
+	return DatatypeAny
 }

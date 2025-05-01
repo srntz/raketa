@@ -1,10 +1,10 @@
 package rktypes
 
 type RKType struct {
-	datatype RKTypeconst
+	datatype RKDatatype
 	value    string
 }
 
 type IRKType interface {
-	ToEnum() RKTypeconst
+	ToEnum() RKDatatype
 }

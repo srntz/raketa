@@ -20,7 +20,7 @@ type RKStr struct {
 func NewRKStr(value string) *RKStr {
 	return &RKStr{
 		typedef: RKType{
-			datatype: TYPECONST_STR,
+			datatype: DatatypeStr,
 			value:    value,
 		},
 		metadata: rkStrMetadata{
@@ -29,8 +29,8 @@ func NewRKStr(value string) *RKStr {
 	}
 }
 
-func (str RKStr) ToEnum() RKTypeconst {
-	return TYPECONST_STR
+func (str RKStr) ToEnum() RKDatatype {
+	return DatatypeStr
 }
 
 func (str *RKStr) SetCharLimit(limit int) error {
