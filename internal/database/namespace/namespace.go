@@ -12,11 +12,11 @@ type Namespace struct {
 	metadata *namespaceMetadata
 }
 
-func NewNamespace(name string, datatype rktypes.RKDatatype) (string, INamespace) {
+func NewNamespace(name string, datatype rktypes.RKDatatype, metadata *MetadataOptions) (string, INamespace) {
 	return name, &Namespace{
 		name:     name,
 		storage:  map[string]rktypes.IRKType{},
-		metadata: newNamespaceMetadata(datatype),
+		metadata: newNamespaceMetadata(datatype, metadata),
 	}
 }
 

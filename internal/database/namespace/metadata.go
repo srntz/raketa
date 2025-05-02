@@ -6,16 +6,38 @@ import (
 
 type namespaceMetadata struct {
 	restrictValueTypeTo rktypes.RKDatatype
+	preventDeletion     bool
+	strict              bool
 }
 
-func newNamespaceMetadata(restrictValueTypeTo rktypes.RKDatatype) *namespaceMetadata {
-	return &namespaceMetadata{
+type MetadataOptions struct {
+	preventDeletion *bool
+}
+
+func newNamespaceMetadata(restrictValueTypeTo rktypes.RKDatatype, options *MetadataOptions) *namespaceMetadata {
+	m := &namespaceMetadata{
 		restrictValueTypeTo: restrictValueTypeTo,
 	}
+
+	if options == nil || options.preventDeletion == nil {
+		m.preventDeletion = false
+	} else {
+		m.preventDeletion = *options.preventDeletion
+	}
+
+	return m
 }
 
 func InitializeDefaultNamespace() (string, INamespace) {
-	return NewNamespace("main", rktypes.DatatypeAny)
+	return "main", &Namespace{
+		name:    "main",
+		storage: map[string]rktypes.IRKType{},
+		metadata: &namespaceMetadata{
+			restrictValueTypeTo: rktypes.DatatypeAny,
+			strict:              true,
+			preventDeletion:     true,
+		},
+	}
 }
 
 // TODO implement conversion of storage data at restriction change.
