@@ -8,21 +8,22 @@ type namespaceMetadata struct {
 	restrictValueTypeTo rktypes.RKDatatype
 }
 
-func newNamespaceMetadata(typeConstraint rktypes.IRKType) *namespaceMetadata {
+func newNamespaceMetadata(restrictValueTypeTo rktypes.RKDatatype) *namespaceMetadata {
 	return &namespaceMetadata{
-		restrictValueTypeTo: typeConstraint.ToEnum(),
+		restrictValueTypeTo: restrictValueTypeTo,
 	}
 }
 
 func InitializeDefaultNamespace() (string, INamespace) {
-	return NewNamespace("main", &rktypes.RKAny{})
+	return NewNamespace("main", rktypes.DatatypeAny)
 }
 
-// TODO re-initialize namespace storage. create a way to check the validity of type-typeconst pair
-func (namespace *Namespace[T]) SetRestrictValueTypeTo(restrictTo rktypes.RKDatatype) {
-	namespace.metadata.restrictValueTypeTo = restrictTo
-	switch restrictTo {
-	case rktypes.DatatypeAny:
-		namespace.storage = map[string]*rktypes.RKAny{}
-	}
+// TODO implement conversion of storage data at restriction change.
+func (n *Namespace) SetRestrictValueTypeTo(restrictTo rktypes.RKDatatype) (rktypes.RKDatatype, error) {
+	n.metadata.restrictValueTypeTo = restrictTo
+	return n.metadata.restrictValueTypeTo, nil
+}
+
+func (n *Namespace) GetRestrictValueTypeTo() rktypes.RKDatatype {
+	return n.metadata.restrictValueTypeTo
 }

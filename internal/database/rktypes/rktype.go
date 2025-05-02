@@ -6,5 +6,5 @@ type RKType struct {
 }
 
 type IRKType interface {
-	ToEnum() RKDatatype
+	GetDatatype() RKDatatype
 }

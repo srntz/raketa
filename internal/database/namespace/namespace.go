@@ -1,20 +1,56 @@
 package namespace
 
-type Namespace[T NamespaceStorageValueTypes] struct {
+import (
+	"errors"
+	"fmt"
+	"raketa/internal/database/rktypes"
+)
+
+type Namespace struct {
 	name     string
-	storage  map[string]T
+	storage  map[string]rktypes.IRKType
 	metadata *namespaceMetadata
 }
 
-func NewNamespace[T NamespaceStorageValueTypes](name string, typeConstraint T) (string, INamespace) {
-	return name, &Namespace[T]{
+func NewNamespace(name string, datatype rktypes.RKDatatype) (string, INamespace) {
+	return name, &Namespace{
 		name:     name,
-		storage:  map[string]T{},
-		metadata: newNamespaceMetadata(typeConstraint),
+		storage:  map[string]rktypes.IRKType{},
+		metadata: newNamespaceMetadata(datatype),
 	}
 }
 
-func (namespace *Namespace[T]) CheckHealth() bool {
+func (n *Namespace) Insert(key string, val rktypes.IRKType) (rktypes.IRKType, error) {
+	if val.GetDatatype() != n.metadata.restrictValueTypeTo && n.metadata.restrictValueTypeTo != rktypes.DatatypeAny {
+		return nil, errors.New(
+			fmt.Sprintf("Type %s does not satisfy the constraint", n.metadata.restrictValueTypeTo.String()),
+		)
+	}
+
+	if _, ok := n.storage[key]; ok {
+		return nil, errors.New(fmt.Sprintf("Key %s already exists", key))
+	}
+
+	n.storage[key] = val
+	return val, nil
+}
+
+func (n *Namespace) Upsert(key string, val rktypes.IRKType) (rktypes.IRKType, error) {
+	if val.GetDatatype() != n.metadata.restrictValueTypeTo && n.metadata.restrictValueTypeTo != rktypes.DatatypeAny {
+		return nil, errors.New(
+			fmt.Sprintf("Value %s does not satisfy the constraint", n.metadata.restrictValueTypeTo.String()),
+		)
+	}
+
+	n.storage[key] = val
+	return val, nil
+}
+
+func (n *Namespace) GetName() string {
+	return n.name
+}
+
+func (namespace *Namespace) CheckHealth() bool {
 	if namespace.name != "" && namespace.metadata != nil {
 		return true
 	}
