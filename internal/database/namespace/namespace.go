@@ -9,7 +9,7 @@ import (
 type Namespace struct {
 	name     string
 	storage  map[string]rktypes.IRKType
-	metadata *namespaceMetadata
+	metadata *metadata
 }
 
 func NewNamespace(name string, datatype rktypes.RKDatatype, metadata *MetadataOptions) (string, INamespace) {

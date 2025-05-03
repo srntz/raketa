@@ -2,21 +2,27 @@ package namespace
 
 import (
 	"raketa/internal/database/rktypes"
+	rkstr "raketa/internal/database/rktypes/str"
 )
 
-type namespaceMetadata struct {
+type metadata struct {
 	restrictValueTypeTo rktypes.RKDatatype
 	preventDeletion     bool
 	strict              bool
+	strMetadata         *rkstr.Metadata
 }
 
 type MetadataOptions struct {
 	preventDeletion *bool
 }
 
-func newNamespaceMetadata(restrictValueTypeTo rktypes.RKDatatype, options *MetadataOptions) *namespaceMetadata {
-	m := &namespaceMetadata{
+func newNamespaceMetadata(restrictValueTypeTo rktypes.RKDatatype, options *MetadataOptions) *metadata {
+	m := &metadata{
 		restrictValueTypeTo: restrictValueTypeTo,
+	}
+
+	if restrictValueTypeTo == rktypes.DatatypeStr {
+		m.strMetadata = rkstr.NewMetadata()
 	}
 
 	if options == nil || options.preventDeletion == nil {
@@ -32,7 +38,7 @@ func InitializeDefaultNamespace() (string, INamespace) {
 	return "main", &Namespace{
 		name:    "main",
 		storage: map[string]rktypes.IRKType{},
-		metadata: &namespaceMetadata{
+		metadata: &metadata{
 			restrictValueTypeTo: rktypes.DatatypeAny,
 			strict:              true,
 			preventDeletion:     true,

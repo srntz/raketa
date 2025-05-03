@@ -7,8 +7,8 @@ type RKAny struct {
 func NewRKAny(value string) *RKAny {
 	return &RKAny{
 		typedef: RKType{
-			datatype: DatatypeAny,
-			value:    value,
+			Datatype: DatatypeAny,
+			Value:    value,
 		},
 	}
 }
